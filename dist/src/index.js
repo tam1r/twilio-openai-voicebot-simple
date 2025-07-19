@@ -22,15 +22,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -48,7 +39,7 @@ app.use(express_1.default.urlencoded({ extended: true })).use(express_1.default.
 /****************************************************
  Twilio Voice Webhook Endpoints
 ****************************************************/
-app.post("/incoming-call", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.post("/incoming-call", async (req, res) => {
     logger_1.default.twl.info(`incoming-call from ${req.body.From} to ${req.body.To}`);
     try {
         oai.createWebsocket(); // This demo only supports one call at a time, hence a single OpenAI websocket is stored globally
@@ -56,7 +47,7 @@ app.post("/incoming-call", (req, res) => __awaiter(void 0, void 0, void 0, funct
         oai.ws.on("error", (err) => logger_1.default.oai.error("openai websocket error", err));
         // The incoming-call webhook is blocked until the OpenAI websocket is connected.
         // This ensures Twilio's Media Stream doesn't send audio packets to OpenAI prematurely.
-        yield oai.wsPromise;
+        await oai.wsPromise;
         res.status(200);
         res.type("text/xml");
         // The <Stream/> TwiML noun tells Twilio to send the call to the websocket endpoint below.
@@ -79,8 +70,8 @@ app.post("/incoming-call", (req, res) => __awaiter(void 0, void 0, void 0, funct
         logger_1.default.oai.error("incoming call webhook failed, probably because OpenAI websocket could not connect.", error);
         res.status(500).send();
     }
-}));
-app.post("/call-status-update", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+});
+app.post("/call-status-update", async (req, res) => {
     const status = req.body.CallStatus;
     if (status === "error")
         logger_1.default.twl.error(`call-status-update ${status}`);
@@ -89,8 +80,8 @@ app.post("/call-status-update", (req, res) => __awaiter(void 0, void 0, void 0, 
     if (status === "error" || status === "completed")
         oai.closeWebsocket();
     res.status(200).send();
-}));
-app.post("/recording-status", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+});
+app.post("/recording-status", async (req, res) => {
     const recordingStatus = req.body.RecordingStatus;
     const recordingUrl = req.body.RecordingUrl;
     const recordingSid = req.body.RecordingSid;
@@ -109,7 +100,7 @@ app.post("/recording-status", (req, res) => __awaiter(void 0, void 0, void 0, fu
         logger_1.default.twl.error(`Recording failed for Call SID: ${callSid}`);
     }
     res.status(200).send();
-}));
+});
 /****************************************************
  Twilio Media Stream Websocket Endpoint
 ****************************************************/

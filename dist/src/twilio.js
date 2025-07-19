@@ -18,11 +18,11 @@ function setWs(wss) {
 ****************************************************/
 /** Clear Twilio's audio buffer (https://www.twilio.com/docs/voice/media-streams/websocket-messages#send-a-clear-message) */
 function clearAudio() {
-    exports.ws === null || exports.ws === void 0 ? void 0 : exports.ws.send(JSON.stringify({ event: "clear", streamSid }));
+    exports.ws?.send(JSON.stringify({ event: "clear", streamSid }));
 }
 /** Send raw audio to Twilio call (https://www.twilio.com/docs/voice/media-streams/websocket-messages#send-a-media-message) */
 function sendAudio(audio) {
-    exports.ws === null || exports.ws === void 0 ? void 0 : exports.ws.send(JSON.stringify({ event: "media", streamSid, media: { payload: audio } }));
+    exports.ws?.send(JSON.stringify({ event: "media", streamSid, media: { payload: audio } }));
 }
 /****************************************************
  Websocket Listeners, https://www.twilio.com/docs/voice/media-streams/websocket-messages#websocket-messages-from-twilio

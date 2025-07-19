@@ -2,16 +2,18 @@
   "compilerOptions": {
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "lib": ["es6"],
+    "lib": ["es2020", "dom"],
     "module": "CommonJS",
     "outDir": "./dist",
     "resolveJsonModule": true,
     "rootDir": ".",
     "skipLibCheck": true,
-    "strict": true,
-    "target": "es6",
-    "allowJs": true
+    "strict": false,
+    "target": "es2020",
+    "allowJs": true,
+    "moduleResolution": "node",
+    "types": ["node"]
   },
-  "exclude": ["node_modules", "**/*.spec.ts", "scripts"],
+  "exclude": ["node_modules", "**/*.spec.ts", "scripts", "dist"],
   "include": ["global.d.ts", "src/**/*.ts", "config.js"]
 }
